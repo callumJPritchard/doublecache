@@ -1,0 +1,14 @@
+{
+  "name": "multicache",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Callum Pritchard <cjohnpritchard@gmail.com>",
+  "license": "MIT",
+  "packageManager": "yarn@3.1.0",
+  "dependencies": {
+    "typescript": "^4.4.4"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
