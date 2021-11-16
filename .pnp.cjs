@@ -19,7 +19,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
     ],
     "dependencyTreeRoots": [
       {
-        "name": "multicache",
+        "name": "root-workspace-0b6124",
         "reference": "workspace:."
       },
       {
@@ -29,6 +29,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "@multicache/mem",
         "reference": "workspace:packages/mem"
+      },
+      {
+        "name": "multicache",
+        "reference": "workspace:packages/multicache"
       },
       {
         "name": "@multicache/utils",
@@ -46,7 +50,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ["@multicache/mem", ["workspace:packages/mem"]],
       ["@multicache/types", ["workspace:packages/z_sharedTypes"]],
       ["@multicache/utils", ["workspace:packages/utils"]],
-      ["multicache", ["workspace:."]]
+      ["multicache", ["workspace:packages/multicache"]],
+      ["root-workspace-0b6124", ["workspace:."]]
     ],
     "fallbackPool": [
     ],
@@ -125,10 +130,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["multicache", [
+        ["workspace:packages/multicache", {
+          "packageLocation": "./packages/multicache/",
+          "packageDependencies": [
+            ["multicache", "workspace:packages/multicache"],
+            ["@multicache/disk", "workspace:packages/disk"],
+            ["@multicache/mem", "workspace:packages/mem"],
+            ["@multicache/types", "workspace:packages/z_sharedTypes"],
+            ["@multicache/utils", "workspace:packages/utils"],
+            ["@types/node", "npm:16.11.7"],
+            ["short-hash", "npm:1.0.0"],
+            ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=ddd1e8"]
+          ],
+          "linkType": "SOFT",
+        }]
+      ]],
+      ["root-workspace-0b6124", [
         ["workspace:.", {
           "packageLocation": "./",
           "packageDependencies": [
-            ["multicache", "workspace:."],
+            ["root-workspace-0b6124", "workspace:."],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=ddd1e8"]
           ],
           "linkType": "SOFT",

@@ -5,7 +5,7 @@ __metadata:
   version: 5
   cacheKey: 8
 
-"@multicache/disk@workspace:packages/disk":
+"@multicache/disk@workspace:^, @multicache/disk@workspace:packages/disk":
   version: 0.0.0-use.local
   resolution: "@multicache/disk@workspace:packages/disk"
   dependencies:
@@ -16,7 +16,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@multicache/mem@workspace:packages/mem":
+"@multicache/mem@workspace:^, @multicache/mem@workspace:packages/mem":
   version: 0.0.0-use.local
   resolution: "@multicache/mem@workspace:packages/mem"
   dependencies:
@@ -32,7 +32,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@multicache/utils@workspace:packages/utils":
+"@multicache/utils@workspace:^, @multicache/utils@workspace:packages/utils":
   version: 0.0.0-use.local
   resolution: "@multicache/utils@workspace:packages/utils"
   dependencies:
@@ -56,9 +56,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multicache@workspace:.":
+"multicache@workspace:packages/multicache":
   version: 0.0.0-use.local
-  resolution: "multicache@workspace:."
+  resolution: "multicache@workspace:packages/multicache"
+  dependencies:
+    "@multicache/disk": "workspace:^"
+    "@multicache/mem": "workspace:^"
+    "@multicache/types": "workspace:^"
+    "@multicache/utils": "workspace:^"
+    "@types/node": ^16.11.7
+    short-hash: ^1.0.0
+    typescript: ^4.4.4
+  languageName: unknown
+  linkType: soft
+
+"root-workspace-0b6124@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     typescript: ^4.4.4
   languageName: unknown

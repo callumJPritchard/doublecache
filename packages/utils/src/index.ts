@@ -23,7 +23,7 @@ class CombineCaches implements Cacheable {
     }
 }
 
-function createCacheifyFunc(cache: Cacheable, fn: (...args: any[]) => Promise<any>, ...args: any[]) {
+function cacheifyFunc(cache: Cacheable, fn: (...args: any[]) => Promise<any>) {
 
     type params = Parameters<typeof fn>
     type returnType = Awaited<ReturnType<typeof fn>>
@@ -57,4 +57,4 @@ function createCacheifyFunc(cache: Cacheable, fn: (...args: any[]) => Promise<an
     return ret
 }
 
-export { CombineCaches, createCacheifyFunc }
+export { CombineCaches, cacheifyFunc  }
