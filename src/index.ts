@@ -1,5 +1,5 @@
 import { DiskCache } from './disk';
-import { AutoAdjustingMemoryCache } from './mem'
+import { AutoAdjustingMemoryCache, MemoryCache } from './mem'
 import { CombineCaches, cacheifyFunc } from './common'
 
 type AutoConfig = {
@@ -38,12 +38,23 @@ class Cache implements Cacheable {
 
         return this._instance;
     }
+
+    static cacheify(fn: Parameters<typeof cacheifyFunc>[1]) {
+        return cacheifyFunc(this.getInstance(), fn)
+    }
 }
 
 const doublecache = Cache.getInstance()
 
-function cacheify(fn: Parameters<typeof cacheifyFunc>[1]) {
-    return cacheifyFunc(doublecache, fn)
-}
+const cacheify = Cache.cacheify
 
-export { doublecache, cacheify }
+export default doublecache
+
+export { 
+    doublecache, 
+    cacheify,
+    cacheifyFunc,
+    CombineCaches,
+    MemoryCache,
+    AutoAdjustingMemoryCache
+}
