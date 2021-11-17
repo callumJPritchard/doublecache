@@ -1,13 +1,33 @@
 {
+  "name": "funccache",
   "version": "1.0.0",
-  "main": "index.js",
-  "author": "Callum Pritchard <cjohnpritchard@gmail.com>",
+  "description": "",
+  "main": "dist/index.js",
+  "entry": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/callumJPritchard/funcCache.git"
+  },
+  "author": "",
   "license": "MIT",
-  "packageManager": "yarn@3.1.0",
-  "dependencies": {
+  "bugs": {
+    "url": "https://github.com/callumJPritchard/funcCache/issues"
+  },
+  "homepage": "https://github.com/callumJPritchard/funcCache#readme",
+  "devDependencies": {
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "dependencies": {
+    "short-hash": "^1.0.0"
+  }
 }
