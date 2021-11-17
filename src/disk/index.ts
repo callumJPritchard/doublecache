@@ -5,7 +5,6 @@ import os from "os";
 
 interface config {
     directory?: string;
-    maxMemoryItems?: number;
 }
 
 

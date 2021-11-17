@@ -1,4 +1,4 @@
-import doublecache, { cacheify } from '.'
+import doublecache, { AutoAdjustingMemoryCache, cacheify } from '.'
 
 describe('basic caching tests', () => {
     const keysToTest = 10
@@ -11,6 +11,30 @@ describe('basic caching tests', () => {
             const value = await doublecache.get(`key${i}`)
             expect(value).toBe(`value${i}`)
         }
+    })
+})
+
+describe('update settings on doublecache', () => {
+    test('change ram target', () => {
+        doublecache.updateSettings({
+            targetMemPercent: 20
+        })
+        const ramFrac = (doublecache.caches[0] as AutoAdjustingMemoryCache).targetMemFrac
+        expect(ramFrac).toBe(0.2)
+    })
+    test('change initial max size', () => {
+        doublecache.updateSettings({
+            initialMaxSize: 100
+        })
+        const size = (doublecache.caches[0] as AutoAdjustingMemoryCache).maxSize
+        expect(size).toBe(100)
+    })
+    test('change min size', () => {
+        doublecache.updateSettings({
+            minimumSize: 3
+        })
+        const minsize = (doublecache.caches[0] as AutoAdjustingMemoryCache).minimumSize
+        expect(minsize).toBe(3)
     })
 })
 
