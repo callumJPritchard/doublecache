@@ -34,3 +34,19 @@ describe('basic cache tests', () => {
 
     })
 })
+
+describe('directory tests', () => {
+    test('test a custom directory', async () => {
+        const cache = new DiskCache({ directory: './tmp' });
+        await cache.set('test', 'value');
+        const value = await cache.get('test');
+        expect(value).toEqual('value');
+    })
+    test('test reusing the same custom directory', async () => {
+        const cache = new DiskCache({ directory: './tmp' });
+        await cache.set('test', 'value');
+        const value = await cache.get('test');
+        expect(value).toEqual('value');
+    })
+})
+
