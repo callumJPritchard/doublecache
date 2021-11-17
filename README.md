@@ -33,6 +33,11 @@ console.log(wrapped('test1')) // the next call will be fast, as it is in the cac
 
 console.log(wrapped('test2')) // this will be slow again as we dont have a cached result with this parameter
 
+// lets try with test1 again, but we dont want a result older than 5s
+// this will call slowFunction again if it has been more than 5s since the last call to wrapped('test1')
+const returned = wrapped.config{maxAge: 5 * 1000})('test1') 
+
+
 ```
 ### setting and getting a key manually
 ```
@@ -43,6 +48,13 @@ doublecache.set('key a', 'value a: values can be of any type')
 console.log(doublecache.get('key a'))  // logs  'value a: values can be of any type'
 
 console.log(doublecache.get('unused key'))  // logs  undefined
+```
+
+### overriding default settings
+```
+import doublecache from 'doublecache'
+
+doublecache.updateSettings({targetMemPercent: 50}) // we dont want to go above 50% memory usage
 ```
 
 ### the disk cache
