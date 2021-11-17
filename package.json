@@ -1,6 +1,6 @@
 {
-  "name": "funccache",
-  "version": "1.0.0",
+  "name": "doublecache",
+  "version": "0.0.2",
   "description": "",
   "main": "dist/index.js",
   "entry": "dist/index.js",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/callumJPritchard/funcCache.git"
+    "url": "git+https://github.com/callumJPritchard/doublecache.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/callumJPritchard/funcCache/issues"
+    "url": "https://github.com/callumJPritchard/doublecache/issues"
   },
-  "homepage": "https://github.com/callumJPritchard/funcCache#readme",
+  "homepage": "https://github.com/callumJPritchard/doublecache#readme",
   "devDependencies": {
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.7",

@@ -40,10 +40,10 @@ class Cache implements Cacheable {
     }
 }
 
-const multicache = Cache.getInstance()
+const doublecache = Cache.getInstance()
 
 function cacheify(fn: Parameters<typeof cacheifyFunc>[1]) {
-    return cacheifyFunc(multicache, fn)
+    return cacheifyFunc(doublecache, fn)
 }
 
-export { multicache, cacheify }
+export { doublecache, cacheify }
