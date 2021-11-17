@@ -1,7 +1,5 @@
 import shortHash from "short-hash";
 
-type Combineable = Cacheable
-
 class CombineCaches implements Cacheable {
     caches: Cacheable[];
     constructor(...caches: Cacheable[]) { this.caches = caches } // just add the caches to array
