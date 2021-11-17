@@ -34,7 +34,7 @@ function cacheifyFunc(cache: Cacheable, fn: (...args: any[]) => Promise<any>, ..
 
     const nameStart = fn.name || shortHash(fn.toString()) // todo: make this more unique 
 
-    const cFn = async function (config: proxyConfig, ...args: params) {
+    const cFn = async function (config: proxyConfig, ...args: params): Promise<returnType> {
         if (config.dontCache) return await fn(...args)
 
         const key = `${nameStart}-${JSON.stringify(args)}`
