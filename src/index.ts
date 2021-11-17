@@ -50,14 +50,14 @@ class Cache implements Cacheable {
         return this._instance;
     }
 
-    static cacheify(fn: Parameters<typeof cacheifyFunc>[1]) {
-        return cacheifyFunc(this.getInstance(), fn)
+    cacheify(fn: Parameters<typeof cacheifyFunc>[1]) {
+        return cacheifyFunc(this, fn)
     }
 }
 
 const doublecache = Cache.getInstance()
 
-const cacheify = Cache.cacheify
+const cacheify = doublecache.cacheify
 
 export default doublecache
 

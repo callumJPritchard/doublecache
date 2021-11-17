@@ -14,7 +14,7 @@ npm i doublecache
 ```
 ### wrapping a function
 ```
-import doublecache from 'doublecache'
+import { cacheify } from 'doublecache'
 
 function slowFunction(parameter) {
     // some very slow logic:
@@ -25,7 +25,7 @@ function slowFunction(parameter) {
     console.log(parameter)
 }
 
-const wrapped = doublecache.cacheify(slowFunction)
+const wrapped = cacheify(slowFunction)
 
 console.log(wrapped('test1')) // the first call will be as slow as usual
 
