@@ -1,6 +1,7 @@
 import { DiskCache } from './disk';
 import { AutoAdjustingMemoryCache, MemoryCache } from './mem'
 import { CombineCaches, cacheifyFunc } from './common'
+import { cp } from 'fs';
 
 type AutoConfig = {
     initialMaxSize?: number
@@ -13,34 +14,24 @@ const defaultInitialMaxSize = 1000;
 const defaultTargetMemPercent = 85;
 
 
-class Cache implements Cacheable {
+class Cache extends CombineCaches implements Cacheable {
 
     private static _instance: Cache
 
-    combinedCache: CombineCaches
-
-    get: getterFunc
-
-    set: setterFunc
-
     constructor(config?: AutoConfig) {
-        this.combinedCache = new CombineCaches(
-            new AutoAdjustingMemoryCache(
-                {
-                    minimumSize: config?.minimumSize || defaultMinimumSize,
-                    initialMaxSize: config?.initialMaxSize || defaultInitialMaxSize,
-                    targetMemPercent: config?.targetMemPercent || defaultTargetMemPercent
-                }),
-            new DiskCache())
-
-        this.get = this.combinedCache.get
-        this.set = this.combinedCache.set
+        super(new AutoAdjustingMemoryCache(
+            {
+                minimumSize: config?.minimumSize || defaultMinimumSize,
+                initialMaxSize: config?.initialMaxSize || defaultInitialMaxSize,
+                targetMemPercent: config?.targetMemPercent || defaultTargetMemPercent
+            }),
+        new DiskCache())
     }
 
     updateSettings(config: AutoConfig) {
-        (this.combinedCache.caches[0] as AutoAdjustingMemoryCache).minimumSize = config.minimumSize || defaultMinimumSize;
-        (this.combinedCache.caches[0] as AutoAdjustingMemoryCache).maxSize = config.initialMaxSize || defaultInitialMaxSize;
-        (this.combinedCache.caches[0] as AutoAdjustingMemoryCache).targetMemFrac = (config.targetMemPercent || defaultTargetMemPercent) / 100;
+        (this.caches[0] as AutoAdjustingMemoryCache).minimumSize = config.minimumSize || defaultMinimumSize;
+        (this.caches[0] as AutoAdjustingMemoryCache).maxSize = config.initialMaxSize || defaultInitialMaxSize;
+        (this.caches[0] as AutoAdjustingMemoryCache).targetMemFrac = (config.targetMemPercent || defaultTargetMemPercent) / 100;
 
     }
 
