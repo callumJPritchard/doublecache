@@ -3,10 +3,14 @@ import { AutoAdjustingMemoryCache, MemoryCache } from './mem'
 import { CombineCaches, cacheifyFunc } from './common'
 
 type AutoConfig = {
-    initialMaxSize: number
+    initialMaxSize?: number
     minimumSize?: number
-    targetMemPercent: number
+    targetMemPercent?: number
 }
+
+const defaultMinimumSize = 10;
+const defaultInitialMaxSize = 1000;
+const defaultTargetMemPercent = 85;
 
 
 class Cache implements Cacheable {
@@ -23,14 +27,21 @@ class Cache implements Cacheable {
         this.combinedCache = new CombineCaches(
             new AutoAdjustingMemoryCache(
                 {
-                    minimumSize: config?.minimumSize || 10,
-                    initialMaxSize: config?.initialMaxSize || 1000,
-                    targetMemPercent: config?.targetMemPercent || 90
+                    minimumSize: config?.minimumSize || defaultMinimumSize,
+                    initialMaxSize: config?.initialMaxSize || defaultInitialMaxSize,
+                    targetMemPercent: config?.targetMemPercent || defaultTargetMemPercent
                 }),
             new DiskCache())
 
         this.get = this.combinedCache.get
         this.set = this.combinedCache.set
+    }
+
+    updateSettings(config: AutoConfig) {
+        (this.combinedCache.caches[0] as AutoAdjustingMemoryCache).minimumSize = config.minimumSize || defaultMinimumSize;
+        (this.combinedCache.caches[0] as AutoAdjustingMemoryCache).maxSize = config.initialMaxSize || defaultInitialMaxSize;
+        (this.combinedCache.caches[0] as AutoAdjustingMemoryCache).targetMemFrac = (config.targetMemPercent || defaultTargetMemPercent) / 100;
+
     }
 
     static getInstance() {
