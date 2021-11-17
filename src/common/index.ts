@@ -1,5 +1,3 @@
-import shortHash from "short-hash";
-
 class CombineCaches implements Cacheable {
     caches: Cacheable[];
     constructor(...caches: Cacheable[]) { this.caches = caches } // just add the caches to array
@@ -20,6 +18,8 @@ class CombineCaches implements Cacheable {
     }
 }
 
+let nameIndex = 0
+
 function cacheifyFunc(cache: Cacheable, fn: (...args: any[]) => Promise<any>, ...args: any[]) {
 
     type params = Parameters<typeof fn>
@@ -30,7 +30,8 @@ function cacheifyFunc(cache: Cacheable, fn: (...args: any[]) => Promise<any>, ..
         dontCache?: boolean,
     }
 
-    const nameStart = fn.name || shortHash(fn.toString()) // todo: make this more unique 
+    const nameStart = `cacheifiedfn${nameIndex}`
+    nameIndex++
 
     const cFn = async function (config: proxyConfig, ...args: params): Promise<returnType> {
         if (config.dontCache) return await fn(...args)
