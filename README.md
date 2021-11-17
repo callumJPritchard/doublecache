@@ -13,6 +13,7 @@ the default doublecache uses both a disk-based cache and a memory-based cache
 npm i doublecache
 ```
 ### wrapping a function
+all wrapped functions will become async
 ```
 import { cacheify } from 'doublecache'
 
@@ -27,15 +28,15 @@ function slowFunction(parameter) {
 
 const wrapped = cacheify(slowFunction)
 
-console.log(wrapped('test1')) // the first call will be as slow as usual
+console.log(await wrapped('test1')) // the first call will be as slow as usual
 
-console.log(wrapped('test1')) // the next call will be fast, as it is in the cache
+console.log(await wrapped('test1')) // the next call will be fast, as it is in the cache
 
-console.log(wrapped('test2')) // this will be slow again as we dont have a cached result with this parameter
+console.log(await wrapped('test2')) // this will be slow again as we dont have a cached result with this parameter
 
 // lets try with test1 again, but we dont want a result older than 5s
 // this will call slowFunction again if it has been more than 5s since the last call to wrapped('test1')
-const returned = wrapped.config{maxAge: 5 * 1000})('test1') 
+const returned = await wrapped.config{maxAge: 5 * 1000})('test1') 
 
 
 ```
@@ -43,11 +44,11 @@ const returned = wrapped.config{maxAge: 5 * 1000})('test1')
 ```
 import doublecache from 'doublecache'
 
-doublecache.set('key a', 'value a: values can be of any type')
+await doublecache.set('key a', 'value a: values can be of any type')
 
-console.log(doublecache.get('key a'))  // logs  'value a: values can be of any type'
+console.log(await doublecache.get('key a'))  // logs  'value a: values can be of any type'
 
-console.log(doublecache.get('unused key'))  // logs  undefined
+console.log(await doublecache.get('unused key'))  // logs  undefined
 ```
 
 ### overriding default settings
