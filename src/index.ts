@@ -41,14 +41,14 @@ class Cache extends CombineCaches implements Cacheable {
         return this._instance;
     }
 
-    cacheify(fn: Parameters<typeof cacheifyFunc>[1]) {
-        return cacheifyFunc(this, fn)
+    static cacheify(fn: Parameters<typeof cacheifyFunc>[1]) {
+        return cacheifyFunc(Cache.getInstance(), fn)
     }
 }
 
 const doublecache = Cache.getInstance()
 
-const cacheify = doublecache.cacheify
+const cacheify = Cache.cacheify
 
 export default doublecache
 
