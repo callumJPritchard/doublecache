@@ -1,0 +1,6 @@
+src/
+tmp/
+*
+!dist/
+!dist/*
+!dist/**/*
