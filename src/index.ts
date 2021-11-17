@@ -1,7 +1,6 @@
 import { DiskCache } from './disk';
 import { AutoAdjustingMemoryCache, MemoryCache } from './mem'
 import { CombineCaches, cacheifyFunc } from './common'
-import { cp } from 'fs';
 
 type AutoConfig = {
     initialMaxSize?: number
@@ -18,12 +17,12 @@ class Cache extends CombineCaches implements Cacheable {
 
     private static _instance: Cache
 
-    constructor(config?: AutoConfig) {
+    constructor() {
         super(new AutoAdjustingMemoryCache(
             {
-                minimumSize: config?.minimumSize || defaultMinimumSize,
-                initialMaxSize: config?.initialMaxSize || defaultInitialMaxSize,
-                targetMemPercent: config?.targetMemPercent || defaultTargetMemPercent
+                minimumSize: defaultMinimumSize,
+                initialMaxSize: defaultInitialMaxSize,
+                targetMemPercent: defaultTargetMemPercent
             }),
         new DiskCache())
     }
