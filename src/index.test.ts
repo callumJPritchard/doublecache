@@ -13,3 +13,65 @@ describe('basic caching tests', () => {
         }
     })
 })
+
+describe('cacheify tests', () => {
+    test('cacheified function should only be executed once', async () => {
+        let count = 0
+        async function fn() {
+            count++
+            return 'returned'
+        }
+        const cacheifiedFn = cacheify(fn)
+        await cacheifiedFn()
+        expect(count).toBe(1)
+
+        await cacheifiedFn()
+        expect(count).toBe(1)
+    })
+    test('unnamed cacheified function should only be executed once', async () => {
+        let count = 0
+        
+        const cacheifiedFn = cacheify(async function () {
+            count++
+            return 'returned'
+        })
+        await cacheifiedFn()
+        expect(count).toBe(1)
+
+        await cacheifiedFn()
+        expect(count).toBe(1)
+    })
+    test('dontcache config option on first call should mean function executes twice', async () => {
+        let count = 0
+        
+        const cacheifiedFn = cacheify(async function () {
+            count++
+            return 'returned'
+        })
+        await cacheifiedFn.config({dontCache: true})()
+        expect(count).toBe(1)
+
+        await cacheifiedFn()
+        expect(count).toBe(2)
+    })
+    test('maxAge config option should be obeyed', async () => {
+        let count = 0
+        
+        const cacheifiedFn = cacheify(async function () {
+            count++
+            return 'returned'
+        })
+        await cacheifiedFn()
+        expect(count).toBe(1)
+
+        await new Promise(resolve => setTimeout(resolve, 100))
+
+        await cacheifiedFn.config({maxAge: 1000})()
+        expect(count).toBe(1)
+
+        await new Promise(resolve => setTimeout(resolve, 100))
+
+        await cacheifiedFn.config({maxAge: 10})()
+        expect(count).toBe(2)
+    })
+})
