@@ -51,52 +51,13 @@ console.log(await doublecache.get('key a'))  // logs  'value a: values can be of
 console.log(await doublecache.get('unused key'))  // logs  undefined
 ```
 
-### overriding default settings
-```
-import doublecache from 'doublecache'
-
-doublecache.updateSettings({targetMemPercent: 50}) // we dont want to go above 50% memory usage
-```
-
-### the disk cache
-
-this stores cache items in temporary files. by default governed by os.tmpdir(). this is not fast but allows storing a lot of data without impacting system memory
-
-### the memory cache
-
-this stores items in memory which is much faster. As memory usage reaches a limit (by default 85%) the least-recently used items will be evicted
-
-### the doublecache
-
-doublecache will try and get keys from memory first, and then try the disk cache if not found in memory
-sets will write to both underlying caches
-
-### cacheify (or doublecache.cacheify)
-
-wrap a function with doublecache. the returned, wrapped function can be called as normal but the base function will only be called on cache miss
-the key used for this cached function is a combination of function name and the parameters passed in
-
-the returned wrapped function has an additional property: .config()  which can be used to pass options when calling the function
-
-.config has options:   
-
-     dontcache: just call the base function if true
-     maxAge: a matching cache entry for this call must be less than <maxAge> millis old
-
-
-### the parts
-
-    cacheifyFunc
-    CombineCaches
-    MemoryCache
-    AutoAdjustingMemoryCache
-
-the default export is for doublecache:   
-this is the instance of the cache, which can be used directly or used to cache-ify functions backed by this instance
 
 ## roadmap
+
+
 
 coming up:  
 - testing
 - performance tests
-- improve performance?
+- improve performance with large sets of data and sets of large data
+- improve performance around disk access

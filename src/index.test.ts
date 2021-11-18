@@ -12,6 +12,7 @@ describe('basic caching tests', () => {
             expect(value).toBe(`value${i}`)
         }
     })
+
 })
 
 describe('cacheify tests', () => {
