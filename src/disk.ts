@@ -7,9 +7,15 @@ type diskData = {
     [key: string]: cacheEntry
 }
 
-class DiskCache{
+type lockIndex = {
+    [key: string]: ((value?: any) => void)[]
+}
+
+class DiskCache {
 
     directory: string
+
+    lockIndex: lockIndex = {}
 
     constructor() {
         this.directory = (process.env.CACHE_DIRECTORY || os.tmpdir()) + `/cacheDirectory`
@@ -18,14 +24,6 @@ class DiskCache{
         while (existsSync(this.directory)) this.directory = (process.env.CACHE_DIRECTORY || os.tmpdir()) + `/cacheDirectory${index++}`
         mkdirSync(this.directory)
     }
-    async getFile(key: string): Promise<diskData> {
-        try {
-            const file = await fsPromises.readFile(this.getFilePath(key))
-            return JSON.parse(file.toString())
-        } catch (e) {
-            return {}
-        }
-    }
     async get(key: string): Promise<cacheEntry | undefined> {
         const file = await this.getFile(key)
         return file[key]
@@ -33,32 +31,53 @@ class DiskCache{
     async set(key: string, value: cacheEntry): Promise<void> {
         const existing = await this.getFile(key)
         existing[key] = value
-        await fsPromises.writeFile(this.getFilePath(key), JSON.stringify(existing))
+        await this.writeFile(key, JSON.stringify(existing))
     }
-    getFilePath(key: string): string {
-        return (`${this.directory}/${shorthash(key).slice(0,2)}`)
+
+    async getFile(key: string): Promise<diskData> {
+        try {
+            const file = await this.readFile(key)
+            return JSON.parse(file.toString())
+        } catch (e) {
+            return {}
+        }
+    }
+
+    private async readFile(key: string) {
+        const shortcode = this.shortCode(key)
+        this.lockIndex[shortcode] = this.lockIndex[shortcode] || []
+        await new Promise<void>(resolve => {
+            this.lockIndex[shortcode].push(resolve)
+
+            if (this.lockIndex[shortcode].length === 1) resolve()
+        })
+        const res = fsPromises.readFile(this.getFilePath(key))
+        this.lockIndex[shortcode][0] && this.lockIndex[shortcode][0]()
+        this.lockIndex[shortcode].shift()
+        return res
+    }
+
+    private async writeFile(key: string, data: string) {
+        const shortcode = this.shortCode(key)
+        this.lockIndex[shortcode] = this.lockIndex[shortcode] || []
+        await new Promise<void>(resolve => {
+            this.lockIndex[shortcode].push(resolve)
+
+            if (this.lockIndex[shortcode].length === 1) resolve()
+        })
+        const res = fsPromises.writeFile(this.getFilePath(key), data)
+        this.lockIndex[shortcode][0] && this.lockIndex[shortcode][0]()
+        this.lockIndex[shortcode].shift()
+        return res
+    }
+
+    private shortCode(key: string): string {
+        return shorthash(key).slice(0, 2)
+    }
+
+    private getFilePath(key: string): string {
+        return (`${this.directory}/${this.shortCode(key)}`)
     }
 }
 export { DiskCache };
 
-/*
-
-    async set(key: string, data: any): Promise<void> {
-        await this.setBase({ key, value: data, age: Date.now(), lastAccess: Date.now() })
-    }
-    async getFile(key: string): Promise<cacheItem[]> {
-        try {
-            const data = await promisify(fs.readFile)(this.keyToFileName(key))
-            return JSON.parse(data.toString())
-        } catch (e) {
-            return []
-        }
-    }
-    async setFile(key: string, fileData: any): Promise<void> {
-        await promisify(fs.writeFile)(this.keyToFileName(key), JSON.stringify(fileData))
-    }
-    private keyToFileName(key: string): string {
-        return `${this.directory}/${shortHash(key)}`
-    }
-}
-*/
