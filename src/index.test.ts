@@ -15,7 +15,7 @@ describe('basic caching tests', () => {
 
     test('add and get large num of keys', async () => {
         
-    const keysToTest = 100_000
+    const keysToTest = 10_000
         for (let i = 0; i < keysToTest; i++) {
             await doublecache.set(`key${i}`, `value${i}`)
         }
@@ -23,7 +23,7 @@ describe('basic caching tests', () => {
             const value = await doublecache.get(`key${i}`)
             expect(value).toBe(`value${i}`)
         }
-    }, 30 * 1000)
+    }, 60 * 1000)
 
 })
 
