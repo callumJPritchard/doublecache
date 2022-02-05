@@ -52,8 +52,8 @@ class DiskCache {
             if (this.lockIndex[shortcode].length === 1) resolve()
         })
         const res = fsPromises.readFile(this.getFilePath(key))
-        this.lockIndex[shortcode][0] && this.lockIndex[shortcode][0]()
-        this.lockIndex[shortcode].shift()
+        const r = this.lockIndex[shortcode].shift()
+        r && r()
         return res
     }
 
@@ -66,8 +66,8 @@ class DiskCache {
             if (this.lockIndex[shortcode].length === 1) resolve()
         })
         const res = fsPromises.writeFile(this.getFilePath(key), data)
-        this.lockIndex[shortcode][0] && this.lockIndex[shortcode][0]()
-        this.lockIndex[shortcode].shift()
+        const r = this.lockIndex[shortcode].shift()
+        r && r()
         return res
     }
 
