@@ -11,6 +11,8 @@ type lockIndex = {
     [key: string]: ((value?: any) => void)[]
 }
 
+
+
 class DiskCache {
 
     directory: string
