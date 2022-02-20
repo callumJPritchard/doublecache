@@ -1,15 +1,7 @@
 import shorthash from 'short-hash'
 import { existsSync, mkdirSync, promises as fsPromises } from "fs";
 import os from 'os'
-
-
-type diskData = {
-    [key: string]: cacheEntry
-}
-
-type lockIndex = {
-    [key: string]: ((value?: any) => void)[]
-}
+import { FileReaderWriter } from './fileReader'
 
 
 
@@ -17,7 +9,7 @@ class DiskCache {
 
     directory: string
 
-    lockIndex: lockIndex = {}
+    fileReaders: { [key: string]: FileReaderWriter } = {}
 
     constructor() {
         this.directory = (process.env.CACHE_DIRECTORY || os.tmpdir()) + `/cacheDirectory`
@@ -26,51 +18,19 @@ class DiskCache {
         while (existsSync(this.directory)) this.directory = (process.env.CACHE_DIRECTORY || os.tmpdir()) + `/cacheDirectory${index++}`
         mkdirSync(this.directory)
     }
+
     async get(key: string): Promise<cacheEntry | undefined> {
-        const file = await this.getFile(key)
-        return file[key]
+        return this.getFileReader(key).get(key)
     }
+
     async set(key: string, value: cacheEntry): Promise<void> {
-        const existing = await this.getFile(key)
-        existing[key] = value
-        await this.writeFile(key, JSON.stringify(existing))
+        return this.getFileReader(key).set(key, value)
     }
 
-    async getFile(key: string): Promise<diskData> {
-        try {
-            const file = await this.readFile(key)
-            return JSON.parse(file.toString())
-        } catch (e) {
-            return {}
-        }
-    }
-
-    private async readFile(key: string) {
-        const shortcode = this.shortCode(key)
-        this.lockIndex[shortcode] = this.lockIndex[shortcode] || []
-        await new Promise<void>(resolve => {
-            this.lockIndex[shortcode].push(resolve)
-
-            if (this.lockIndex[shortcode].length === 1) resolve()
-        })
-        const res = fsPromises.readFile(this.getFilePath(key))
-        const r = this.lockIndex[shortcode].shift()
-        r && r()
-        return res
-    }
-
-    private async writeFile(key: string, data: string) {
-        const shortcode = this.shortCode(key)
-        this.lockIndex[shortcode] = this.lockIndex[shortcode] || []
-        await new Promise<void>(resolve => {
-            this.lockIndex[shortcode].push(resolve)
-
-            if (this.lockIndex[shortcode].length === 1) resolve()
-        })
-        const res = fsPromises.writeFile(this.getFilePath(key), data)
-        const r = this.lockIndex[shortcode].shift()
-        r && r()
-        return res
+    private getFileReader(key: string): FileReaderWriter {
+        const shortCode = this.shortCode(key)
+        if (!this.fileReaders[shortCode]) this.fileReaders[shortCode] = new FileReaderWriter(this.getFilePath(key))
+        return this.fileReaders[shortCode]
     }
 
     private shortCode(key: string): string {

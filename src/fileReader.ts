@@ -75,7 +75,6 @@ class FileReaderWriter {
             return JSON.parse(data)
         } catch (e: any) {
             if (e.code === 'ENOENT') return {}
-            if (e.code === 'SyntaxError') console.log(await fsPromises.readFile(this.path, 'utf8'))
             throw e
         }
     }

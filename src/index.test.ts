@@ -18,12 +18,12 @@ describe('basic caching tests', () => {
         const keysToTest = 500
         const proms = []
         for (let i = 0; i < keysToTest; i++) {
-            proms.push(doublecache.set(`key${i}`, `value${i}`))
+            proms.push(doublecache.set(`key-${i}`, `value${i}`))
         }
         await Promise.all(proms)
         proms.length = 0
         for (let i = 0; i < keysToTest; i++) {
-            proms.push(doublecache.get(`key${i}`))
+            proms.push(doublecache.get(`key-${i}`))
         }
         await Promise.all(proms)
         for (let i = 0; i < keysToTest; i++) {
