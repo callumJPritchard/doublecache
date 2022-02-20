@@ -17,7 +17,7 @@ class FileReaderWriter {
     }
 
     async get(key: string): Promise<cacheEntry | undefined> {
-        return this.enqueue(async(data: diskData) => {
+        return this.enqueue(async (data: diskData) => {
             return data[key]
         })
     }
@@ -30,6 +30,8 @@ class FileReaderWriter {
 
     private enqueue(fn: (data: diskData) => Promise<any>): ReturnType<typeof fn> {
 
+        const queueLen = this.queue.length
+
         return new Promise<ReturnType<typeof fn>>(resolve => {
             // push onto queue
             this.queue.push(async (data: diskData) => {
@@ -37,7 +39,7 @@ class FileReaderWriter {
                 resolve(value)
             })
             // if this is the only item, dequeue
-            if (this.queue.length === 0) this.dequeue()
+            if (queueLen === 0) this.dequeue()
         })
     }
 
@@ -46,18 +48,19 @@ class FileReaderWriter {
         // get 1st item from queue. dont shift until execution done
         const fn = this.queue[0]
 
-        if (!fn) { // no more items
-
-            if (this.currentData) await this.writeFile(this.currentData) // write to disk
-            this.currentData = null
-            return
-        }
-
+        if (!fn) return // no more items in queue, just return
+        
         if (!this.currentData) { // not opened
             this.currentData = await this.readFile()
         }
 
         await fn(this.currentData) // execute item
+
+        // if we just executed the last item, close file
+        if (this.queue.length === 1) {
+            if (this.currentData) await this.writeFile(this.currentData) // write to disk
+            this.currentData = null
+        }
 
         // remove from queue
         this.queue.shift()
@@ -67,8 +70,14 @@ class FileReaderWriter {
 
     private async readFile(): Promise<diskData> {
 
-        const data = await fsPromises.readFile(this.path, 'utf8')
-        return JSON.parse(data)
+        try {
+            const data = await fsPromises.readFile(this.path, 'utf8')
+            return JSON.parse(data)
+        } catch (e: any) {
+            if (e.code === 'ENOENT') return {}
+            if (e.code === 'SyntaxError') console.log(await fsPromises.readFile(this.path, 'utf8'))
+            throw e
+        }
     }
 
     private async writeFile(data: diskData): Promise<void> {
