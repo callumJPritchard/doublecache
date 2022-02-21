@@ -16,18 +16,19 @@ describe('basic caching tests', () => {
     test('add and get large num of keys', async () => {
 
         const keysToTest = 500
-        const proms = []
+        let proms = []
         for (let i = 0; i < keysToTest; i++) {
             proms.push(doublecache.set(`key-${i}`, `value${i}`))
         }
         await Promise.all(proms)
-        proms.length = 0
+        proms = []
         for (let i = 0; i < keysToTest; i++) {
             proms.push(doublecache.get(`key-${i}`))
         }
-        await Promise.all(proms)
+        const vals = await Promise.all(proms)
+        
         for (let i = 0; i < keysToTest; i++) {
-            const value = proms[i]
+            const value = vals[i]
             expect(value).toBe(`value${i}`)
         }
     }, 60 * 1000)
