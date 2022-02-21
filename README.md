@@ -1,10 +1,17 @@
 # doublecache
 
 ## what is it?  
-get the speed of ram-based caching, with the storage limits of disk-based caching!  also provides an easy way to wrap functions, ensuring they will only be called if there isnt a suitable cached result
 
-this package implements a 2-level cache for node packages, as well as the parts you need to make your own: such as replacing the disk-cache with a database-backed cache.  
-the default doublecache uses both a disk-based cache and a memory-based cache
+Mem-limited caching backed up by disk-based caching.  
+sets are written both to memory and disk, as mem usage creeps too high the least-recently accessed keys are trimmed from the memory cache.  
+these keys will still be available on disk.  
+
+## who is it aimed at?
+probably not those looking for absolute highest performance. While this lib does aim to get good performance, its main goal is for caching expensive calls/functions where waiting for disk reads/writes is preferable  
+    
+## how does it work?
+The memory storage simply stores on an object. as v8-reported memory usage reaches a threshold it will evict entries.
+the disk storage uses shorthash to determine which file to store the entry in. This should ensure good-enough parallelism though a queue is also implemented to ensure safety in the case of collisions of concurrent writes
 
 ## using it
 
@@ -50,14 +57,3 @@ console.log(await doublecache.get('key a'))  // logs  'value a: values can be of
 
 console.log(await doublecache.get('unused key'))  // logs  undefined
 ```
-
-
-## roadmap
-
-
-
-coming up:  
-- testing
-- performance tests
-- improve performance with large sets of data and sets of large data
-- improve performance around disk access
