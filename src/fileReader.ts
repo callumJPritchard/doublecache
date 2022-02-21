@@ -1,4 +1,4 @@
-import { mkdtempSync, promises as fsPromises } from "fs";
+import { mkdtempSync, writeFileSync, promises as fsPromises } from "fs";
 
 type diskData = {
     [key: string]: cacheEntry
@@ -14,6 +14,7 @@ class FileReaderWriter {
 
     constructor(path: string) {
         this.path = mkdtempSync(path) + '/tmpfile'
+        writeFileSync(this.path, '{}')
     }
 
     async get(key: string): Promise<cacheEntry | undefined> {
@@ -69,9 +70,7 @@ class FileReaderWriter {
     }
 
     private async readFile(): Promise<diskData> {
-
         return JSON.parse(await fsPromises.readFile(this.path, 'utf8'))
-
     }
 
     private async writeFile(data: diskData): Promise<void> {
