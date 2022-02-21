@@ -31,7 +31,7 @@ class DiskCache {
     }
 
     private shortCode(key: string): string {
-        return shorthash(key).slice(0, 2)
+        return shorthash(key)
     }
 
     private getFilePath(key: string): string {
