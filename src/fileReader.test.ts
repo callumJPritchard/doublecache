@@ -5,7 +5,7 @@ import os from 'os'
 
 function getDirBase() {
     let index = 0
-    const dirBase = `${os.tmpdir()}/cacheDirectory/test`
+    const dirBase = `${os.tmpdir()}/cacheDirectory`
     let ret = dirBase
     while (existsSync(ret)) ret = `${dirBase}${index++}`
     mkdirSync(ret)
@@ -14,7 +14,7 @@ function getDirBase() {
 
 describe('basic FileReaderWriter tests', () => {
     const dirBase = getDirBase()
-    const fileReaderWriter = new FileReaderWriter(dirBase + '/test')
+    const fileReaderWriter = new FileReaderWriter(dirBase + '/testFile')
 
     test('set and get', async () => {
         await fileReaderWriter.set('key', {
@@ -49,7 +49,7 @@ describe('basic FileReaderWriter tests', () => {
         }
     })
 
-    test('set many, wait, then get', async() => {
+    test('set many, wait, then get', async () => {
         let promises = []
         const numToTest = 10_000
         for (let i = 0; i < numToTest; i++) {
