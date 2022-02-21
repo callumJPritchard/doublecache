@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, promises as fsPromises } from "fs";
+import { mkdtempSync, promises as fsPromises } from "fs";
 
 type diskData = {
     [key: string]: cacheEntry
@@ -13,7 +13,7 @@ class FileReaderWriter {
     private queue: ((data: diskData) => any)[] = []
 
     constructor(path: string) {
-        this.path = path
+        this.path = mkdtempSync(path) + '/tmpfile'
     }
 
     async get(key: string): Promise<cacheEntry | undefined> {
@@ -49,7 +49,7 @@ class FileReaderWriter {
         const fn = this.queue[0]
 
         if (!fn) return // no more items in queue, just return
-        
+
         if (!this.currentData) { // not opened
             this.currentData = await this.readFile()
         }
@@ -70,13 +70,8 @@ class FileReaderWriter {
 
     private async readFile(): Promise<diskData> {
 
-        try {
-            const data = await fsPromises.readFile(this.path, 'utf8')
-            return JSON.parse(data)
-        } catch (e: any) {
-            if (e.code === 'ENOENT') return {}
-            throw e
-        }
+        return JSON.parse(await fsPromises.readFile(this.path, 'utf8'))
+
     }
 
     private async writeFile(data: diskData): Promise<void> {

@@ -1,5 +1,5 @@
 import shorthash from 'short-hash'
-import { existsSync, mkdirSync, promises as fsPromises } from "fs";
+import { mkdtempSync } from "fs";
 import os from 'os'
 import { FileReaderWriter } from './fileReader'
 
@@ -12,11 +12,8 @@ class DiskCache {
     fileReaders: { [key: string]: FileReaderWriter } = {}
 
     constructor() {
-        this.directory = (process.env.CACHE_DIRECTORY || os.tmpdir()) + `/cacheDirectory`
-        let index = 0
-        // increase index until directory is unique
-        while (existsSync(this.directory)) this.directory = (process.env.CACHE_DIRECTORY || os.tmpdir()) + `/cacheDirectory${index++}`
-        mkdirSync(this.directory)
+        const base = (process.env.CACHE_DIRECTORY || os.tmpdir()) + `/cacheDirectory`
+        this.directory = mkdtempSync(base)
     }
 
     async get(key: string): Promise<cacheEntry | undefined> {
