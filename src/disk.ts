@@ -1,4 +1,3 @@
-import shorthash from 'short-hash'
 import { mkdtempSync } from "fs";
 import os from 'os'
 import { FileReaderWriter } from './fileReader'
@@ -7,13 +6,17 @@ import { FileReaderWriter } from './fileReader'
 
 class DiskCache {
 
+    readerLimit: number
+
     directory: string
 
     fileReaders: { [key: string]: FileReaderWriter } = {}
 
-    constructor() {
+    constructor(readerLimit?: number) {
         const base = (process.env.CACHE_DIRECTORY || os.tmpdir()) + `/cacheDirectory`
         this.directory = mkdtempSync(base)
+
+        this.readerLimit = readerLimit || 64
     }
 
     async get(key: string): Promise<cacheEntry | undefined> {
@@ -26,17 +29,20 @@ class DiskCache {
 
     private getFileReader(key: string): FileReaderWriter {
         const shortCode = this.shortCode(key)
-        if (!this.fileReaders[shortCode]) this.fileReaders[shortCode] = new FileReaderWriter(this.getFilePath(key))
+        if (!this.fileReaders[shortCode]) this.fileReaders[shortCode] = new FileReaderWriter(this.directory)
         return this.fileReaders[shortCode]
     }
 
     private shortCode(key: string): string {
-        return shorthash(key)
-    }
+        let hash = 5381
+        let index = key.length
 
-    private getFilePath(key: string): string {
-        return (`${this.directory}/${this.shortCode(key)}`)
+        while (index) hash = (hash * 33) ^ key.charCodeAt(--index);
+
+        return ((hash >>> 0) % this.readerLimit) + '';
     }
 }
+
+
 export { DiskCache };
 
