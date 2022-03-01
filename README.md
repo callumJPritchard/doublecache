@@ -2,9 +2,10 @@
 
 ## what is it?  
 
-Mem-limited caching backed up by disk-based caching.  
-sets are written both to memory and disk, as mem usage creeps too high the least-recently accessed keys are trimmed from the memory cache.  
-these keys will still be available on disk.  
+A hashmap-based disk cache, accelerated by a simple Map cache.   
+Memory cache uses LRU for eviction
+Disk-cache allows safe concurrent operations for better performance
+cache items include a creation time, allowing you to specify a max age for retrieved items
 
 ## who is it aimed at?
 probably not those looking for absolute highest performance. While this lib does aim to get good performance, its main goal is for caching expensive calls/functions where waiting for disk reads/writes is preferable  
