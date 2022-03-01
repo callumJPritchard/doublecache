@@ -3,17 +3,14 @@
 ## what is it?  
 
 A hashmap-based disk cache, accelerated by a simple Map cache.   
-Memory cache uses LRU for eviction
-Disk-cache allows safe concurrent operations for better performance
-cache items include a creation time, allowing you to specify a max age for retrieved items
+includes a convenient wrapper function, cacheify, to get a cached, async version of the same function(more below)  
+Memory cache uses LRU for eviction  
+Disk-cache allows safe concurrent operations for better performance  
+cache items include a creation time, allowing you to specify a max age for retrieved items  
 
 ## who is it aimed at?
 probably not those looking for absolute highest performance. While this lib does aim to get good performance, its main goal is for caching expensive calls/functions where waiting for disk reads/writes is preferable  
     
-## how does it work?
-The memory storage simply stores on an object. as v8-reported memory usage reaches a threshold it will evict entries.
-the disk storage uses shorthash to determine which file to store the entry in. This should ensure good-enough parallelism though a queue is also implemented to ensure safety in the case of collisions of concurrent writes
-
 ## using it
 
 ### install
