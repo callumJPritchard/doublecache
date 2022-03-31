@@ -1,7 +1,7 @@
 
 let nameIndex = 0;
 
-function cacheifyFunc(cache: Cacheable, fn: (...args: any[]) => Promise<any>, ...args: any[]) {
+function cacheifyFunc(cache: Cacheable, fn: (...args: any[]) => any, ...args: any[]) {
 
     type params = Parameters<typeof fn>
     type returnType = Awaited<ReturnType<typeof fn>>
